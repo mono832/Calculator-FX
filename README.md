@@ -14,3 +14,5 @@ org.apache.commons for their Gamma function
 commons-math3 https://mvnrepository.com/artifact/org.apache.commons/commons-math3
 and of course Maven, Oracle, and Jetbrains for obvious reasons
 and a thanks to launch4j for being better then jpackage
+* Do not under any circumstances think thanat the above belong to me. They are third party dependencys/software that are used in the project, and deserver their own 
+respective credits *
