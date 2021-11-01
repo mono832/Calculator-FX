@@ -3,8 +3,16 @@ By, MK
 
 A scientific calculator, capstone, and passion project made in JavaFX
 
-You have my permission to use, study, and probe my code as much as you want. Just give credit where its due
+You have my permission to use, study, and probe my code as much as you want. Just give credit where its due.
 Do not redistribute on any other website
+
+# for thoes of you using the .exe file
+There are secrets to be found. (like 7)
+
+if you dont understand how to use the program. visit the guid page in the help menu or press CTRL + h
+
+# for the sneaky code readers
+If you want to make your own extensions to the program visit the bottom of the guide page in the .exe file for a basic how to
 
 # Not my work credit (please don't kill me, I gave credit)
 GraalVM for their javascript evaluator
