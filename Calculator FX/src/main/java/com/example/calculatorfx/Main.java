@@ -2024,9 +2024,9 @@ public class Main extends Application
                 b2.setId("asciiB2");
                 b3.setId("ascii");
                 b4.setId("ascii");
-                b5.setId("ascii");
+                b5.setId("asciiB57");
                 b6.setId("ascii");
-                b7.setId("ascii");
+                b7.setId("asciiB57");
                 b8.setId("ascii");
                 b9.setId("ascii");
                 b0.setId("ascii");

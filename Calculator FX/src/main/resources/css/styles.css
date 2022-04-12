@@ -53,7 +53,7 @@
 #specialSizeColor{
 -fx-pref-width: 43px;
 -fx-pref-height: 10px;
--fx-font-size:19;
+-fx-font-size:18;
 -fx-background-color:#999797;
 -fx-border-color:#8c8b8b;
 }
@@ -155,6 +155,19 @@
 -fx-border-color:#8c8b8b;
 }
 #asciiB2:armed{
+-fx-background-color:#666565;
+-fx-border-color:#8c8b8b;
+}
+#asciiB57{
+-fx-pref-width: 60px;
+-fx-pref-height: 60px;
+-fx-font-size:26;
+}
+#asciiB57:hover{
+-fx-background-color:#707070;
+-fx-border-color:#8c8b8b;
+}
+#asciiB57:armed{
 -fx-background-color:#666565;
 -fx-border-color:#8c8b8b;
 }
