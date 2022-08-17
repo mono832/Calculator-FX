@@ -777,18 +777,44 @@ public class Evaluator
      * @param equationText the textField being drawn from
      * @param answerText gets the final answer or error
      */
-    public void asciiToDec(TextField equationText, Text answerText)
+    public void asciiConverter(TextField equationText, Text answerText, String fromThis)
     {
         try {
             String answer=equationText.getText();
             int toAscii=0;
             char temp;
-            for(int i=0;i<answer.length();i++)
+            String convertedAnswer = "";
+            switch (fromThis)
             {
-                temp=answer.charAt(i);
-                toAscii+= temp;
+                case "To ascii":
+                    for(int i=0;i<answer.length();i++)
+                    {
+                        temp=answer.charAt(i);
+                        toAscii= temp;
+                        convertedAnswer=convertedAnswer.concat(String.valueOf(toAscii)+ " ");
+                    }
+                    convertedAnswer=convertedAnswer.trim();
+                    break;
+                case "From ascii":
+                    String[] splitter =answer.split(" ");
+
+                    for(int i=0;i<splitter.length;i++)
+                    {
+                        toAscii=Integer.parseInt(splitter[i]);
+                        temp=(char)toAscii;
+                        convertedAnswer=convertedAnswer.concat(String.valueOf(temp));
+                    }
+                    break;
+                case "To ascii combined":
+                    for(int i=0;i<answer.length();i++)
+                    {
+                        temp=answer.charAt(i);
+                        toAscii+= temp;
+                    }
+                    convertedAnswer=String.valueOf(toAscii);
+                    break;
             }
-            answerText.setText(String.valueOf(toAscii));
+            answerText.setText(convertedAnswer);
         }
         catch (Exception e)
         {
@@ -1987,6 +2013,7 @@ public class Evaluator
         //if the number is too high or low it ends as zero which is bad
         System.out.println("Condition1 pass, "+(answerNum<1.0E7 && answerNum>1.0E-7));
         System.out.println("Condition2 pass, "+(answerNum>-1.0E7 && answerNum<-1.0E-7));
+        //for fixing floating point rounding error
         if((answerNum<1.0E7 && answerNum>1.0E-7) || (answerNum>-1.0E7 && answerNum<-1.0E-7))
         {
             answerNum=Math.round(answerNum*10000000000.0)/10000000000.0;
@@ -2054,7 +2081,15 @@ public class Evaluator
                 };
                 break;
             case "Ascii converter":
-                temp=temp.replaceAll("¦", "");
+                switch (fromThis)
+                        {
+                            case "From ascii":
+                                temp=temp.replaceAll("[^0-9 ]", "");
+                                break;
+                            default:
+                                temp=temp.replaceAll("¦", "");
+
+                        }
                 break;
             case "Data converter 2¹⁰":  case "Data converter 10³": case "Time converter":
                 case "Frequency converter":

@@ -142,7 +142,7 @@ public class memoryControls
     {
         Button storedString=new Button(input);
         storedString.setFocusTraversable(false);
-        storedString.setId(equationText.getText());
+        storedString.setId(input);
 
         memoryPane.getChildren().add(storedString);
 
