@@ -1962,7 +1962,7 @@ public class Main extends Application
                         return "hi ⮞ 104 105";
                     case "From ascii":
                         return "104 105⮞ hi";
-                    case "From ascii combined":
+                    case "To ascii combined":
                         return "hi ⮞ 209 one way only";
                 }
 
