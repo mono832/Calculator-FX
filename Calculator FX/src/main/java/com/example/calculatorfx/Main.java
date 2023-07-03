@@ -51,7 +51,7 @@ public class Main extends Application
     Stage guideStage=new Stage();
 
     //needed for making UI and storing info
-    memoryControls memory=new memoryControls();
+    MemoryControls memory=new MemoryControls();
 
     //the answer, the equation, the hint
     Text answerText=new Text("");
@@ -160,7 +160,7 @@ public class Main extends Application
         operation.getItems().addAll("Default","Common","Trig","Geometry",
                 "Standard deviation calc", "Quadratic calc","Cubic calc","int, hex, binary, octal converter",
                 "Ascii converter", "Data converter 2¹⁰", "Data converter 10³", "Temp converter",
-                "Time converter", "Angle converter","Frequency converter");
+                "Time converter", "Angle converter","Frequency converter","Discount");
         operation.setValue("Default");
 
         //The main menu and its items
@@ -172,7 +172,7 @@ public class Main extends Application
         helpMenu.getItems().addAll(helpItem,copyItem,pasteItem,cutItem,saveItem);
         mainMenu.getMenus().addAll(helpMenu);
 
-        //set the stage and make it pretty setting image was painful (very funny)
+        //set the stage and make it pretty setting image was PANE-ful (very funny)
         primaryStage.setScene(defaultUI());
         primaryStage.setResizable(false);
         primaryStage.setTitle("Calculator FX");
@@ -324,7 +324,7 @@ public class Main extends Application
      */
     public void createGuideUI()
     {
-        // if its open don't open
+        // if it's open don't open
         if(guideStage.isShowing())
             return;
 
@@ -439,6 +439,13 @@ public class Main extends Application
         textPane.getChildren().add(new Text("\t-Converters will convert between the stated data types"));
         textPane.getChildren().add(new Text("\t\tThe inputs will not evaluate."));
 
+        textPane.getChildren().add(new Text("\t-Discount will accept 2 inputs separated by \",\" and" +
+                " is a money based calculator for calculating sales discounts"));
+        textPane.getChildren().add(new Text("\t\tThe inputs will not evaluate."));
+        textPane.getChildren().add(new Text("\t\tDiscount total shows you the discounted price based on the original price and percent off."));
+        textPane.getChildren().add(new Text("\t\tDiscount % shows you the percent off based on the original price, and discounted price."));
+
+
         textPane.getChildren().add(new Text("There as secrets to find. Find them all."));
 
         specialText=new Text("For the sneaky code readers");
@@ -451,7 +458,8 @@ public class Main extends Application
         textPane.getChildren().add(new Text("\t3) send the UI and info to operations() and link to switches"));
         textPane.getChildren().add(new Text("\t4) create method with function in Evaluator.java"));
         textPane.getChildren().add(new Text("\t5) hook up function name to inputSyntaxCheck() in Evaluator.java"));
-        textPane.getChildren().add(new Text("\t6) hook up method in pressEqual()"));
+        textPane.getChildren().add(new Text("\t6) hook up method in pressEqual()\n"));
+
 
         textPane.setPadding(new Insets(5,5,5,5));
 
@@ -1747,6 +1755,104 @@ public class Main extends Application
     }
 
     /**
+     * Creates the percent calculating UI
+     * @return UI Scene
+     */
+    public Scene percentUI()
+    {
+        VBox textPane=new VBox(5);
+        HBox arrows=new HBox(2);
+        HBox prePane=new HBox(5);
+        StackPane answerPane=new StackPane();
+        StackPane helPane=new StackPane();
+        BorderPane comboHelpPane=new BorderPane();
+        BorderPane calcPane=new BorderPane();
+        BorderPane pane=new BorderPane();
+        GridPane buttonPane=new GridPane();
+
+        fromThis= new ComboBox<>();
+        fromThis.setFocusTraversable(false);
+
+        fromThis.getItems().addAll("Discount total","Discount %");
+
+        fromThis.getSelectionModel().selectFirst();
+
+        equationText.setAlignment(Pos.CENTER_RIGHT);
+        equationText.setDisable(true);
+        equationText.setOpacity(1);     //make text not look disabled
+
+        setCssID();
+
+        answerPane.setAlignment(Pos.CENTER_RIGHT);
+        answerPane.getChildren().add(answerText);
+
+        helPane.setAlignment(Pos.CENTER_RIGHT);
+        helPane.getChildren().add(helpText);
+
+        comboHelpPane.setLeft(operation);
+        comboHelpPane.setRight(helPane);
+
+        textPane.getChildren().add(answerPane);
+        textPane.getChildren().add(equationText);
+        textPane.getChildren().add(comboHelpPane);
+        textPane.getChildren().add(fromThis);
+
+        arrows.getChildren().addAll(left,right);
+        arrows.setAlignment(Pos.CENTER);
+
+        buttonPane.setHgap(2);
+        buttonPane.setVgap(2);
+
+        buttonPane.add(comma,0,0);
+        buttonPane.add(clear,0,1);
+        buttonPane.add(remove,1,1);
+        buttonPane.add(arrows,2,1);
+
+        buttonPane.add(point,0,5);
+        buttonPane.add(equal,2,5);
+
+        buttonPane.add(b0,1,5);
+        buttonPane.add(b1,0,4);
+        buttonPane.add(b2,1,4);
+        buttonPane.add(b3,2,4);
+        buttonPane.add(b4,0,3);
+        buttonPane.add(b5,1,3);
+        buttonPane.add(b6,2,3);
+        buttonPane.add(b7,0,2);
+        buttonPane.add(b8,1,2);
+        buttonPane.add(b9,2,2);
+
+        buttonPane.setPadding(new Insets( 5,0,0,0));
+
+        //the main UI maker
+        calcPane.setTop(textPane);
+        calcPane.setBottom(buttonPane);
+        prePane.getChildren().addAll(calcPane,memory.createUI());
+        prePane.setPadding(new Insets(5,5,5,5));
+        pane.setTop(mainMenu);
+        pane.setCenter(prePane);
+
+        fromThis.setOnAction(event ->{
+            switch (fromThis.getValue()) {
+                case "Discount total":
+                    helpText.setText("$29.99 , 33% ⮞ 20.09");
+                    break;
+                case "Discount %":
+                    helpText.setText("$29.99 , 20.09 ⮞ 33%");
+                    break;
+            }
+            capitalizeButtons();
+        });
+
+        Scene scene=new Scene(pane);
+        scene.setOnMouseClicked(event -> changeFocus());
+        scene.setOnKeyPressed(event -> keyboardControls(event,"press"));
+        scene.setOnKeyReleased(event -> keyboardControls(event,"release"));
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        return scene;
+    }
+
+    /**
      * Changes the Scene
      * @param primaryStage the stage used to change UI
      */
@@ -1819,6 +1925,11 @@ public class Main extends Application
                 keyboardType = "temp";
                 helpText.setText("");
                 primaryStage.setScene(converterUI());
+            }
+            case "Discount"->{
+                keyboardType = "basic,";
+                helpText.setText("$29.99 , 33% ⮞ 20.09");
+                primaryStage.setScene(percentUI());
             }
         }
         capitalizeButtons();
@@ -1965,72 +2076,16 @@ public class Main extends Application
                     case "To ascii combined":
                         return "hi ⮞ 209 one way only";
                 }
-
+            case "Discount":
+                switch (fromThis.getValue())
+                {
+                    case "Discount total":
+                        return "$29.99 , 33% ⮞ 20.09";
+                    case "Discount %":
+                        return "$29.99 , 20.09 ⮞ 33%";
+                }
         }
         return "Error";
-    }
-
-    /**
-     * Moves cursor line right or left
-     * @param direction the direction to move the cursor line
-     */
-    void moveIndex(char direction)
-    {
-        if(direction=='<')
-        {
-            //left
-            String temp=equationText.getText();
-            System.out.println("Left\t\t\t"+temp);
-            System.out.println("Size of string "+temp.length());
-            System.out.println("index of ¦ "+temp.indexOf("¦"));
-
-            if(temp.indexOf("¦")>0)
-            {
-                int i=temp.indexOf("¦");
-                temp=temp.replace("¦","");
-                StringBuilder tempBuilder=new StringBuilder(temp);
-                tempBuilder.insert(i-1,"¦");
-                temp=tempBuilder.toString();
-                System.out.println("Done with left "+temp);
-                equationText.setText(temp);
-                i=temp.indexOf("¦");
-
-                equationText.positionCaret(i+1); //IMPORTANT
-                System.out.println("Caret "+equationText.getCaretPosition());
-            }
-            else
-            {
-                System.out.println("left failed");
-            }
-        }
-        else if(direction=='>')
-        {
-            //right
-            String temp=equationText.getText();
-            System.out.println("Right\t\t\t"+temp);
-            System.out.println("Size of string "+temp.length());
-            System.out.println("index of ¦ "+temp.indexOf("¦"));
-
-            if(temp.indexOf("¦")+1!=temp.length())
-            {
-                int i=temp.indexOf("¦");
-                temp=temp.replace("¦","");
-                StringBuilder tempBuilder=new StringBuilder(temp);
-                tempBuilder.insert(i+1,"¦");
-                temp=tempBuilder.toString();
-                System.out.println("Done with right "+temp);
-                equationText.setText(temp);
-                i=temp.indexOf("¦");
-
-                equationText.positionCaret(i+1); //IMPORTANT
-                System.out.println("Caret "+equationText.getCaretPosition());
-            }
-            else
-            {
-                System.out.println("right failed");
-            }
-
-        }
     }
 
     /**
@@ -2095,8 +2150,10 @@ public class Main extends Application
             case "Time converter":
             case "Angle converter":
             case "Frequency converter":
+            case "Discount":
                 minus.setId("converterMinus");
-                point.setId("converter");
+                comma.setId("converterMinus");
+                point.setId("converterColor");
                 left.setId("converterArrows");
                 right.setId("converterArrows");
                 b0.setId("converter");
@@ -2109,9 +2166,9 @@ public class Main extends Application
                 b7.setId("converter");
                 b8.setId("converter");
                 b9.setId("converter");
-                clear.setId("converter");
-                remove.setId("converter");
-                equal.setId("converter");
+                clear.setId("converterColor");
+                remove.setId("converterColor");
+                equal.setId("converterColor");
                 break;
             case "Ascii converter":
                 left.setId("asciiArrows");
@@ -2169,6 +2226,69 @@ public class Main extends Application
                 clear.setId("asciiClear");
                 space.setId("asciiSpace");
                 break;
+        }
+    }
+
+    /**
+     * Moves cursor line right or left
+     * @param direction the direction to move the cursor line
+     */
+    void moveIndex(char direction)
+    {
+        if(direction=='<')
+        {
+            //left
+            String temp=equationText.getText();
+            System.out.println("Left\t\t\t"+temp);
+            System.out.println("Size of string "+temp.length());
+            System.out.println("index of ¦ "+temp.indexOf("¦"));
+
+            if(temp.indexOf("¦")>0)
+            {
+                int i=temp.indexOf("¦");
+                temp=temp.replace("¦","");
+                StringBuilder tempBuilder=new StringBuilder(temp);
+                tempBuilder.insert(i-1,"¦");
+                temp=tempBuilder.toString();
+                System.out.println("Done with left "+temp);
+                equationText.setText(temp);
+                i=temp.indexOf("¦");
+
+                equationText.positionCaret(i+1); //IMPORTANT
+                System.out.println("Caret "+equationText.getCaretPosition());
+            }
+            else
+            {
+                System.out.println("left failed");
+            }
+        }
+        else if(direction=='>')
+        {
+            //right
+            String temp=equationText.getText();
+            System.out.println("Right\t\t\t"+temp);
+            System.out.println("Size of string "+temp.length());
+            System.out.println("index of ¦ "+temp.indexOf("¦"));
+
+            if(temp.indexOf("¦")+1!=temp.length())
+            {
+                int i=temp.indexOf("¦");
+                temp=temp.replace("¦","");
+                StringBuilder tempBuilder=new StringBuilder(temp);
+                tempBuilder.insert(i+1,"¦");
+                temp=tempBuilder.toString();
+                System.out.println("Done with right "+temp);
+                equationText.setText(temp);
+                i=temp.indexOf("¦");
+
+                equationText.positionCaret(i+1); //IMPORTANT
+                System.out.println("Caret "+equationText.getCaretPosition());
+            }
+            else
+            {
+                System.out.println("right failed");
+            }
+
         }
     }
 
@@ -2309,7 +2429,7 @@ public class Main extends Application
                     point.setText(">");
                     divide.setText("?");
                     break;
-                case "math": case "dec": case "num": case "temp": case "asciiNum":
+                case "math", "dec", "num", "temp", "asciiNum", "basic,":
                     b1.setText("1");
                     b2.setText("2");
                     b3.setText("3");
@@ -2330,6 +2450,7 @@ public class Main extends Application
                     plus.setText("+");
                     point.setText(".");
                     divide.setText("/");
+                    comma.setText(",");
                     break;
                 case "custom^":
                     b6.setText("^");
@@ -2422,7 +2543,7 @@ public class Main extends Application
     void pressEqual ()
     {
         Evaluator evaluator=new Evaluator();
-        String memoryStoreTyp="";
+        String memoryStoreType="";
         evaluator.inputSyntaxCheck(equationText,operation.getValue(),fromThis.getValue());
 
         //there's always time for stupidity... Until there isn't
@@ -2466,63 +2587,67 @@ public class Main extends Application
             {
                 case "Default":
                     evaluator.evaluate(equationText,answerText);
-                    memoryStoreTyp="default";
+                    memoryStoreType="default";
                     break;
                 case "Common":
                     evaluator.common(equationText,answerText,fromThis.getValue());
-                    memoryStoreTyp="from";
+                    memoryStoreType="from";
                     break;
                 case "Trig":
                     evaluator.trig(equationText,answerText,fromThis.getValue(),rDG.getText());
-                    memoryStoreTyp="trig";
+                    memoryStoreType="trig";
                     break;
                 case"Geometry":
                     evaluator.geometry(equationText,answerText,fromThis.getValue());
-                    memoryStoreTyp="from";
+                    memoryStoreType="from";
                     break;
                 case "Standard deviation calc":
                     evaluator.standardDeviation(equationText,answerText);
-                    memoryStoreTyp="default";
+                    memoryStoreType="default";
                     break;
                 case "Quadratic calc":
                     evaluator.quadratic(equationText,answerText);
-                    memoryStoreTyp="none";
+                    memoryStoreType="none";
                     break;
                 case"Cubic calc":
                     evaluator.cubic(equationText,answerText);
-                    memoryStoreTyp="none";
+                    memoryStoreType="none";
                     break;
                 case "int, hex, binary, octal converter":
                     evaluator.programmerCalc(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case "Ascii converter":
                     evaluator.asciiConverter(equationText,answerText,fromThis.getValue());
-                    memoryStoreTyp="from";
+                    memoryStoreType="from";
                     break;
                 case "Data converter 2¹⁰":
                     evaluator.dataConverterBase2(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case "Data converter 10³":
                     evaluator.dataConverterBase10(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case "Temp converter":
                     evaluator.tempConverter(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case "Time converter":
                     evaluator.timeConverter(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case"Angle converter":
                     evaluator.angleConverter(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
                     break;
                 case "Frequency converter":
                     evaluator.frequencyConverter(equationText,answerText,fromThis.getValue(),toThis.getValue());
-                    memoryStoreTyp="from to";
+                    memoryStoreType="from to";
+                    break;
+                case "Discount":
+                    evaluator.percentageAndTax(equationText,answerText,fromThis.getValue());
+                    memoryStoreType="default";
                     break;
 
             }
@@ -2536,13 +2661,13 @@ public class Main extends Application
                     ||answerText.getText().equals("")){}
             else
             {
-                if(memoryStoreTyp.equals("default"))
+                if(memoryStoreType.equals("default"))
                     memory.updateHistory(answerText.getText(),operation.getValue(),equationText);
-                else if(memoryStoreTyp.equals("from"))
+                else if(memoryStoreType.equals("from"))
                     memory.updateHistory(answerText.getText(),fromThis.getValue(),equationText);
-                else if(memoryStoreTyp.equals("trig"))
+                else if(memoryStoreType.equals("trig"))
                     memory.updateHistoryTrig(answerText.getText(),fromThis.getValue(),rDG.getText(),equationText);
-                else if(memoryStoreTyp.equals("from to"))
+                else if(memoryStoreType.equals("from to"))
                     memory.updateHistoryFromTo(answerText.getText(),fromThis.getValue(),toThis.getValue(),equationText);
             }
         }
@@ -2559,6 +2684,7 @@ public class Main extends Application
      * math all math + (c clear, r remove, p π, e euler)
      * custom, all math and , + (c clear, r remove, p π, e euler)
      * custom^ all math and ^ + (c clear, r remove, p π, e euler)
+     * basic, basic numbers and ,. +(c clear, r remove)
      * dec 0-9 and minus + (c clear, r remove)
      * binary 0-1 + (c clear, r remove)
      * hex 0-9 and a-f + (r remove)
@@ -2608,7 +2734,7 @@ public class Main extends Application
                             || keyboardType.equals("octal")|| keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2627,7 +2753,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2646,7 +2772,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2665,7 +2791,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2684,7 +2810,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2707,7 +2833,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2726,7 +2852,7 @@ public class Main extends Application
                             || keyboardType.equals("octal") || keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2744,7 +2870,8 @@ public class Main extends Application
                     if(keyboardType.equals("all") || keyboardType.equals("math") || keyboardType.equals("dec")
                             || keyboardType.equals("hex")|| keyboardType.equals("num")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
-                            || keyboardType.equals("temp") || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("temp") || keyboardType.equals("asciiNum")
+                            || keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2766,7 +2893,8 @@ public class Main extends Application
                     if(keyboardType.equals("all") || keyboardType.equals("math") || keyboardType.equals("dec")
                             || keyboardType.equals("hex")|| keyboardType.equals("num")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
-                            || keyboardType.equals("temp") || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("temp") || keyboardType.equals("asciiNum")
+                            || keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2790,7 +2918,7 @@ public class Main extends Application
                             || keyboardType.equals("octal")|| keyboardType.equals("hex")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -2903,7 +3031,7 @@ public class Main extends Application
                             || keyboardType.equals("dec")|| keyboardType.equals("hex")
                             || keyboardType.equals("binary")|| keyboardType.equals("octal")
                             || keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -3181,7 +3309,7 @@ public class Main extends Application
                             || keyboardType.equals("dec")||keyboardType.equals("binary")
                             ||keyboardType.equals("hex")||keyboardType.equals("octal")
                             ||keyboardType.equals("num")|| keyboardType.equals("temp")
-                            || keyboardType.equals("asciiNum"))
+                            || keyboardType.equals("asciiNum")|| keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
@@ -3250,14 +3378,15 @@ public class Main extends Application
                     }
                     break;
                 case ",":
-                    if(keyboardType.equals("all") || keyboardType.equals("custom,"))
+                    if(keyboardType.equals("all") || keyboardType.equals("custom,")
+                            || keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {
                             integrator=integrator.replace("¦",",¦");
                             simulatePress(comma);
                         }
-                        else if(capitalized && !keyboardType.equals("custom,"))
+                        else if(capitalized && keyboardType.equals("all"))
                         {
                             integrator=integrator.replace("¦","<¦");
                             simulatePress(comma);
@@ -3267,7 +3396,8 @@ public class Main extends Application
                 case ".":
                     if(keyboardType.equals("all") || keyboardType.equals("math")
                             || keyboardType.equals("custom^") || keyboardType.equals("custom,")
-                            || keyboardType.equals("num")|| keyboardType.equals("temp"))
+                            || keyboardType.equals("num")|| keyboardType.equals("temp")
+                            || keyboardType.equals("basic,"))
                     {
                         if(!capitalized)
                         {

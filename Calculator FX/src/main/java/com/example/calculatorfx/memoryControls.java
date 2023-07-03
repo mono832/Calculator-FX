@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 //A versatile class that acts as history, and memory
-public class memoryControls
+public class MemoryControls
 {
     //memory and history for tab
     Button history=new Button("history");
@@ -25,7 +25,7 @@ public class memoryControls
     /**
      * no arg constructor for making things not traversable, and disabling history
      */
-    memoryControls()
+    MemoryControls()
     {
         history.setDisable(true);
         history.setFocusTraversable(false);

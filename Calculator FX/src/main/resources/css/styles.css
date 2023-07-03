@@ -96,6 +96,8 @@
 -fx-pref-width: 120px;
 -fx-pref-height: 30px;
 -fx-font-size:22;
+-fx-background-color:#999797;
+-fx-border-color:#8c8b8b;
 }
 #converterMinus:hover{
 -fx-background-color:#707070;
@@ -109,12 +111,29 @@
 -fx-pref-width: 55px;
 -fx-pref-height: 60px;
 -fx-font-size:22;
+-fx-background-color:#999797;
+-fx-border-color:#8c8b8b;
 }
 #converterArrows:hover{
 -fx-background-color:#707070;
 -fx-border-color:#8c8b8b;
 }
 #converterArrows:armed{
+-fx-background-color:#666565;
+-fx-border-color:#8c8b8b;
+}
+#converterColor{
+-fx-pref-width: 120px;
+-fx-pref-height: 90px;
+-fx-font-size:30;
+-fx-background-color:#999797;
+-fx-border-color:#8c8b8b;
+}
+#converterColor:hover{
+-fx-background-color:#707070;
+-fx-border-color:#8c8b8b;
+}
+#converterColor:armed{
 -fx-background-color:#666565;
 -fx-border-color:#8c8b8b;
 }

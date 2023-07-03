@@ -21,7 +21,7 @@ public class Evaluator
         equationText.setText(syntaxCheck(equationText.getText()));
         String correctedString=mathSyntaxCorrector(equationText.getText());
 
-        //Using the graal.js dependency js & js-sriptengine
+        //Using the graal.js dependency js & js-scriptengine
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("graal.js");
         try {
@@ -2003,6 +2003,52 @@ public class Evaluator
     }
 
     /**
+     * Calculates percentage
+     * @param equationText the textField being drawn from
+     * @param answerText gets the final answer or error
+     * @param fromThis determines what function is triggered
+     */
+    public void percentageAndTax(TextField equationText, Text answerText, String fromThis)
+    {
+        try
+        {
+            String[] splitter;
+            double answerNum=0, originPrice=0, discountPercent=0, discountPrice=0;
+
+            splitter = equationText.getText().split(",");
+            equationText.setText(syntaxCheck(splitter[0]) + "," + syntaxCheck(splitter[1]));
+            splitter[0] = syntaxCheck(splitter[0]);
+            splitter[1] = syntaxCheck(splitter[1]);
+
+            switch (fromThis)
+            {
+                case "Discount total":
+                    //original - (original * discount / 100)
+                    originPrice = Double.parseDouble(splitter[0]);
+                    discountPercent = Double.parseDouble(splitter[1]);
+
+                    answerNum = originPrice - (originPrice * discountPercent / 100.0);
+                    answerNum= Math.round(answerNum*100.0)/100.0;
+                    break;
+                case "Discount %":
+                    // (original - discount price) / original * 100
+                    originPrice = Double.parseDouble(splitter[0]);
+                    discountPrice = Double.parseDouble(splitter[1]);
+
+                    answerNum = (originPrice - discountPrice) / originPrice * 100.0;
+                    answerNum=Math.round(answerNum);
+                    break;
+            }
+            answerText.setText(reScaleDouble(answerNum));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            answerText.setText("ERROR!");
+        }
+    }
+
+    /**
      * Makes sure to return an int format if the double has just ".0" at the end and to round
      * @param answerNum the double to be rescaled
      * @return an int or double in the form of a string
@@ -2098,7 +2144,9 @@ public class Evaluator
             case "Temp converter": case"Angle converter":
                 temp=temp.replaceAll("[^0-9.-]", "");
                 break;
-
+            case "Discount":
+                temp=temp.replaceAll("[^0-9,.]", "");
+                break;
         }
         equationText.setText(temp);
     }
@@ -2178,6 +2226,40 @@ public class Evaluator
             System.out.println(finalPar);
             temp= finalPar.toString();
         }
+        // just adds a zero if there arent numbers after a decimal
+        if(temp.contains("."))
+        {
+            String decThing=temp;
+            StringBuilder finalDec = new StringBuilder();
+            System.out.println(decThing);
+            while(decThing.contains("."))
+            {
+                System.out.println("index of decimal "+decThing.indexOf("."));
+
+                if(decThing.indexOf(".")<decThing.length()-1)
+                {
+                    switch (decThing.charAt(decThing.indexOf(".") + 1)) {
+                        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {}
+                        default -> {
+                            System.out.println("DING at after decimal");
+                            StringBuilder decThingBuilder = new StringBuilder(decThing);
+                            decThingBuilder.insert(decThing.indexOf(".") + 1, "0");
+                            decThing = decThingBuilder.toString();
+                            System.out.println("check " + decThing);
+                        }
+                    }
+                }
+                else
+                {
+                    decThing= decThing+'0';
+                }
+                finalDec.append(decThing.substring(0, decThing.indexOf(".") + 1));
+                decThing=decThing.substring(decThing.indexOf(".")+1);
+            }
+            finalDec = new StringBuilder(finalDec.toString().concat(decThing));
+            System.out.println(finalDec);
+            temp= finalDec.toString();
+        }
         //pi syntax similar to parenthesis
         if(temp.contains("π"))
         {
@@ -2191,7 +2273,7 @@ public class Evaluator
                 if(pieThing.indexOf("π")>0)
                 {
                     switch (pieThing.charAt(pieThing.indexOf("π") - 1)) {
-                        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ')', 'e', 'π' -> {
+                        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'e', 'π' -> {
                             System.out.println("DING at before π");
                             StringBuilder pieThingBuilder = new StringBuilder(pieThing);
                             pieThingBuilder.insert(pieThing.indexOf("π"), "*");
@@ -2258,6 +2340,7 @@ public class Evaluator
             System.out.println(finalE);
             temp= finalE.toString();
         }
+
         return temp;
     }
 
