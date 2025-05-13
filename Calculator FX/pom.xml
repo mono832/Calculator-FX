@@ -6,24 +6,24 @@
 
     <groupId>com.example</groupId>
     <artifactId>CalculatorFX</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
     <name>Calculator FX</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.9.2</junit.version>
+        <junit.version>5.9.0</junit.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21-ea+17</version>
+            <version>24</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>21-ea+17</version>
+            <version>24</version>
         </dependency>
 
         <dependency>
@@ -38,19 +38,18 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--21.1.0 safe-->
         <!-- https://mvnrepository.com/artifact/org.graalvm.js/js -->
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js</artifactId>
-            <version>22.3.1</version>
+            <version>24.2.1</version>
+            <type>pom</type>
         </dependency>
-        <!--21.1.0 safe-->
         <!-- https://mvnrepository.com/artifact/org.graalvm.js/js-scriptengine -->
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js-scriptengine</artifactId>
-            <version>22.3.1</version>
+            <version>24.2.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
         <dependency>
@@ -62,8 +61,7 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>3.3.0</version>
-            <type>maven-plugin</type>
+            <version>3.6.0</version>
         </dependency>
     </dependencies>
 
